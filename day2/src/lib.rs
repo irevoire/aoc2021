@@ -1,4 +1,4 @@
-use std::{ops::Add, str::FromStr};
+use std::str::FromStr;
 
 use aoc::*;
 
@@ -19,24 +19,5 @@ impl FromStr for Movement {
             "down" => Self::Down(movement[1].parse()?),
             s => unreachable!(s),
         })
-    }
-}
-
-#[derive(Default)]
-pub struct Position {
-    pub forward: isize,
-    pub depth: isize,
-}
-
-impl Add<Movement> for Position {
-    type Output = Self;
-
-    fn add(mut self, rhs: Movement) -> Self::Output {
-        match rhs {
-            Movement::Forward(n) => self.forward += n,
-            Movement::Up(n) => self.depth -= n,
-            Movement::Down(n) => self.depth += n,
-        }
-        self
     }
 }

@@ -18,6 +18,7 @@ fn main() {
 pub struct Position {
     pub forward: isize,
     pub depth: isize,
+    pub aim: isize,
 }
 
 impl Add<Movement> for Position {
@@ -25,9 +26,12 @@ impl Add<Movement> for Position {
 
     fn add(mut self, rhs: Movement) -> Self::Output {
         match rhs {
-            Movement::Forward(n) => self.forward += n,
-            Movement::Up(n) => self.depth -= n,
-            Movement::Down(n) => self.depth += n,
+            Movement::Forward(n) => {
+                self.forward += n;
+                self.depth += self.aim * n;
+            }
+            Movement::Up(n) => self.aim -= n,
+            Movement::Down(n) => self.aim += n,
         }
         self
     }
