@@ -1,5 +1,5 @@
 use day5::*;
-use std::{collections::HashMap, str::FromStr};
+use std::collections::HashMap;
 
 use aoc::*;
 
