@@ -19,11 +19,10 @@ fn parse_grid(s: &str) -> Board {
 
 pub fn is_win(grid: &Board) -> bool {
     grid.lines()
-        .find(|line| line.iter().all(|cell| cell.is_ok()))
-        .is_some()
-        || (0..grid.width())
-            .find(|&i| grid.lines().map(|line| line[i]).all(|cell| cell.is_ok()))
-            .is_some()
+        .any(|line| line.iter().all(|cell| cell.is_ok()))
+        || grid
+            .columns()
+            .any(|line| line.iter().all(|cell| cell.is_ok()))
 }
 
 pub fn score(grid: &Board) -> usize {
