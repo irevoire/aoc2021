@@ -26,7 +26,10 @@ fn main() {
             .for_each(|cell| *cell = 0);
     }
 
-    println!("{}", flashing);
+    answer!(
+        "After 100 steps, there was a total of {} octopuses flashing.",
+        flashing
+    );
 }
 
 fn step(grid: &mut Grid<usize>, already_done: &mut HashSet<Coord<usize>>, coord: Coord<usize>) {

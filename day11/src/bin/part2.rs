@@ -20,6 +20,10 @@ fn main() {
         step(&mut grid, &mut HashSet::new(), Coord::at(0, 0));
         let flashing = grid.iter_mut().filter(|cell| **cell >= 10).count();
         if flashing == grid.width() * grid.height() {
+            answer!(
+                "The first step during which all octopuses flash is {}.",
+                n + 1
+            );
             break;
         }
         grid.iter_mut()
