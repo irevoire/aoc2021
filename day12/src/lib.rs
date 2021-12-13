@@ -7,6 +7,7 @@ pub type Caves = HashMap<String, Node>;
 pub struct Node {
     pub name: String,
     pub smol: bool,
+    pub medium: bool,
     pub visited: usize,
     pub liaisons: Vec<String>,
 }
@@ -15,6 +16,7 @@ impl Node {
     pub fn new(name: String) -> Self {
         Self {
             smol: name.chars().all(|c| c.is_lowercase()),
+            medium: false,
             visited: 0,
             name,
             liaisons: vec![],
