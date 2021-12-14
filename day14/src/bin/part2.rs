@@ -17,29 +17,18 @@ fn main() {
         })
         .collect();
 
-    /*
-    for depth in 1..5 {
-        let polymer = polymerize(
-            Box::new(polymer.clone().into_iter().tuple_windows()),
-            &transformations,
-            depth,
-        )
-        .collect::<String>();
-        println!("After step {}: {}", depth, polymer);
-    }
-    */
-
-    for step in 1..25 {
+    for step in 1..42 {
         let polymer = polymerize(
             Box::new(polymer.clone().into_iter().tuple_windows()),
             &transformations,
             step,
-        )
+            &mut HashMap::new(),
+        );
         // .progress_count(2192039569602)
-        .fold(HashMap::<char, usize>::new(), |mut map, c| {
-            *map.entry(c).or_insert(0) += 1;
-            map
-        });
+        // .fold(HashMap::<char, usize>::new(), |mut map, c| {
+        //     *map.entry(c).or_insert(0) += 1;
+        //     map
+        // });
 
         let min = polymer.values().min().unwrap();
         let max = polymer.values().max().unwrap();
@@ -55,16 +44,40 @@ pub fn polymerize<'a>(
     polymer: Box<dyn Iterator<Item = (char, char)> + 'a>,
     transformations: &'a HashMap<(char, char), char>,
     depth: usize,
-) -> Box<dyn Iterator<Item = char> + 'a> {
-    // let cache: HashMap<(char, char), HashMap<char, usize>> = HashMap::new();
-    let iter = polymer.flat_map(|w| [w.0, *(transformations.get(&w).unwrap())]);
+    cache: &mut HashMap<(usize, (char, char)), HashMap<char, usize>>,
+) -> HashMap<char, usize> {
+    static mut first: bool = true;
     if depth == 1 {
-        Box::new(iter) as Box<dyn Iterator<Item = char> + 'a>
+        polymer.fold(HashMap::new(), |mut map, (a, b)| {
+            if unsafe { first } {
+                *map.entry(a).or_insert(0) += 1;
+                unsafe { first = false };
+            }
+            *map.entry(b).or_insert(0) += 1;
+            map
+        })
     } else {
-        Box::new(polymerize(
-            Box::new(iter.tuple_windows()),
-            transformations,
-            depth - 1,
-        )) as Box<dyn Iterator<Item = char> + 'a>
+        polymer
+            .scan((), |_sub_cache, w| {
+                if let Some(res) = cache.get(&(depth, w)) {
+                    return Some(res.clone());
+                } else {
+                    let insert = transformations[&w];
+                    let res = polymerize(
+                        Box::new([(w.0, insert), (insert, w.1)].into_iter()),
+                        transformations,
+                        depth - 1,
+                        cache,
+                    );
+                    cache.insert((depth, w), res.clone());
+                    Some(res)
+                }
+            })
+            .fold(HashMap::new(), |mut res, el| {
+                for (key, value) in el.into_iter() {
+                    *res.entry(key).or_insert(0) += value;
+                }
+                res
+            })
     }
 }
