@@ -26,7 +26,6 @@ fn main() {
 
     let min = polymer.values().min().unwrap();
     let max = polymer.values().max().unwrap();
-    let length = polymer.values().sum::<usize>();
 
     answer!("If you take the quantity of the most common element and subtract the quantity of the least common element you get {}.", max - min);
 }
@@ -37,21 +36,21 @@ pub fn polymerize<'a>(
     depth: usize,
     cache: &mut HashMap<(usize, (char, char)), HashMap<char, usize>>,
 ) -> HashMap<char, usize> {
-    static mut first: bool = true;
+    static mut FIRST: bool = true;
     if depth == 0 {
         polymer.fold(HashMap::new(), |mut map, (a, b)| {
-            if unsafe { first } {
+            if unsafe { FIRST } {
                 *map.entry(a).or_insert(0) += 1;
-                unsafe { first = false };
+                unsafe { FIRST = false };
             }
             *map.entry(b).or_insert(0) += 1;
             map
         })
     } else {
         polymer
-            .scan((), |_sub_cache, w| {
+            .map(|w| {
                 if let Some(res) = cache.get(&(depth, w)) {
-                    return Some(res.clone());
+                    res.clone()
                 } else {
                     let insert = transformations[&w];
                     let res = polymerize(
@@ -61,7 +60,7 @@ pub fn polymerize<'a>(
                         cache,
                     );
                     cache.insert((depth, w), res.clone());
-                    Some(res)
+                    res
                 }
             })
             .fold(HashMap::new(), |mut res, el| {
