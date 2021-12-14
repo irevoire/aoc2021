@@ -13,7 +13,8 @@ fn main() {
         .map(|(key, value)| (key, value.chars().next().unwrap()))
         .collect();
 
-    for _ in 0..10 {
+    for i in 0..40 {
+        println!("step {}", i);
         polymer = polymerize(polymer, &transformations);
     }
 
