@@ -17,27 +17,18 @@ fn main() {
         })
         .collect();
 
-    for step in 1..42 {
-        let polymer = polymerize(
-            Box::new(polymer.clone().into_iter().tuple_windows()),
-            &transformations,
-            step,
-            &mut HashMap::new(),
-        );
-        // .progress_count(2192039569602)
-        // .fold(HashMap::<char, usize>::new(), |mut map, c| {
-        //     *map.entry(c).or_insert(0) += 1;
-        //     map
-        // });
+    let polymer = polymerize(
+        Box::new(polymer.clone().into_iter().tuple_windows()),
+        &transformations,
+        40,
+        &mut HashMap::new(),
+    );
 
-        let min = polymer.values().min().unwrap();
-        let max = polymer.values().max().unwrap();
-        let length = polymer.values().sum::<usize>();
-        dbg!(length);
+    let min = polymer.values().min().unwrap();
+    let max = polymer.values().max().unwrap();
+    let length = polymer.values().sum::<usize>();
 
-        println!("step {:2}:\t{}", step, max - min);
-        // answer!("If you take the quantity of the most common element and subtract the quantity of the least common element you get {}.", max - min);
-    }
+    answer!("If you take the quantity of the most common element and subtract the quantity of the least common element you get {}.", max - min);
 }
 
 pub fn polymerize<'a>(
@@ -47,7 +38,7 @@ pub fn polymerize<'a>(
     cache: &mut HashMap<(usize, (char, char)), HashMap<char, usize>>,
 ) -> HashMap<char, usize> {
     static mut first: bool = true;
-    if depth == 1 {
+    if depth == 0 {
         polymer.fold(HashMap::new(), |mut map, (a, b)| {
             if unsafe { first } {
                 *map.entry(a).or_insert(0) += 1;
