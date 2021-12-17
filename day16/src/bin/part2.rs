@@ -17,7 +17,7 @@ fn main() {
     let packet = parse_packet(&input).0;
 
     answer!(
-        "If we add up the version numbers in all packets we get {}.",
-        packet.version_number()
+        "If we evaluate the expression represented by the transmission we get {}.",
+        packet.value()
     );
 }
