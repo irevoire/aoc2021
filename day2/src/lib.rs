@@ -17,7 +17,7 @@ impl FromStr for Movement {
             "forward" => Self::Forward(movement[1].parse()?),
             "up" => Self::Up(movement[1].parse()?),
             "down" => Self::Down(movement[1].parse()?),
-            s => unreachable!(s),
+            s => unreachable!("{}", s),
         })
     }
 }
